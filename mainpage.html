@@ -81,7 +81,7 @@
         padding: 5px;
         margin-top: 5px;
         border-radius: 4px;
-        display: none; /* Изначально скрываем блоки line */
+        display: none;
     }
 
     .typewriter {
@@ -115,22 +115,6 @@
         }
     }
 
-    /* Добавленные стили для кнопок "Открыть блоки" и "Закрыть блоки" */
-    .open-btn::before,
-    .close-btn::before {
-        display: inline-block;
-        margin-right: 5px;
-        color: green; /* зеленый цвет стрелочек */
-        background-color: transparent; /* убираем фон у стрелочек */
-    }
-
-    .open-btn::before {
-        content: "\25BC"; /* Символ стрелки вниз */
-    }
-
-    .close-btn::before {
-        content: "\25B2"; /* Символ стрелки вверх */
-    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.11/pako_inflate.min.js"></script>
 <script>
@@ -162,15 +146,27 @@
         processFiles(event.dataTransfer.files);
     });
 
+    function getFileCreationDate(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const blob = new Blob([reader.result]);
+                const date = file.lastModifiedDate || file.lastModified;
+                resolve(date);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
     function processFiles(files) {
         let allFoundWords = {};
         const fileCountDiv = document.getElementById('fileCount');
         fileCountDiv.textContent = files.length > 1 ? `Загружено файлов: ${files.length}` : '';
 
-        Array.from(files).forEach(file => {
+        Array.from(files).forEach(async file => {
             const reader = new FileReader();
 
-            reader.onload = function () {
+            reader.onload = async function () {
                 let content;
                 if (file.name.endsWith('.gz')) {
                     const byteCharacters = atob(reader.result.split(',')[1]);
@@ -213,12 +209,14 @@
                     });
                 });
 
+                const creationDate = await getFileCreationDate(file);
+
                 Object.keys(foundWords).forEach(word => {
                     if (!(word in allFoundWords)) {
                         allFoundWords[word] = [];
                     }
                     if (foundWords[word].found) {
-                        allFoundWords[word].push({found: true, line: foundWords[word].line});
+                        allFoundWords[word].push({found: true, line: foundWords[word].line, creationDate: creationDate});
                     }
                 });
 
@@ -247,25 +245,42 @@
             circleSpan.style.marginRight = '5px';
             resultDiv.appendChild(circleSpan);
             const wordSpan = document.createElement('span');
-            wordSpan.textContent = `${word} (${allFoundWords[word].length})`; // добавляем количество найденных слов
+            wordSpan.textContent = `${word} (${allFoundWords[word].length})`;
             wordSpan.classList.add('word');
             resultDiv.appendChild(wordSpan);
 
             const closeButton = document.createElement('button');
-            closeButton.classList.add('open-btn'); // Добавляем класс для стилизации
             closeButton.style.float = 'right';
-            let isOpen = false; // изначально блоки скрыты
-            closeButton.addEventListener('click', function () {
-                const lineBlocks = resultDiv.querySelectorAll('.line');
-                lineBlocks.forEach(function (block) {
+            let isOpen = false;
+            let hasMatches = false;
+            allFoundWords[word].forEach(foundWord => {
+                if (foundWord.found) {
+                    hasMatches = true;
+                }
+            });
+
+            if (hasMatches) {
+                closeButton.textContent = '▼';
+                closeButton.addEventListener('click', function () {
+                    const lineBlocks = resultDiv.querySelectorAll('.line');
+                    lineBlocks.forEach(function (block) {
+                        if (isOpen) {
+                            block.style.display = 'none';
+                        } else {
+                            block.style.display = 'block';
+                        }
+                    });
+                    isOpen = !isOpen;
                     if (isOpen) {
-                        block.style.display = 'none'; // закрываем блоки
+                        closeButton.textContent = '▲';
                     } else {
-                        block.style.display = 'block'; // открываем блоки
+                        closeButton.textContent = '▼';
                     }
                 });
-                isOpen = !isOpen; // меняем состояние
-            });
+            } else {
+                closeButton.style.display = 'none';
+            }
+
             resultDiv.appendChild(closeButton);
 
             allFoundWords[word].forEach(foundWord => {
@@ -274,7 +289,7 @@
                     resultDiv.classList.add('found');
                     const lineDiv = document.createElement('div');
                     lineDiv.classList.add('line');
-                    lineDiv.innerHTML = foundWord.line.replace(new RegExp(word, 'gi'), function (matched) {
+                    lineDiv.innerHTML = `${foundWord.line} <span style="color: lime; font-weight: bold;">(${new Date(foundWord.creationDate).toLocaleString()})</span>`.replace(new RegExp(word, 'gi'), function (matched) {
                         return '<span class="highlight">' + matched + '</span>';
                     });
                     resultDiv.appendChild(lineDiv);
@@ -328,9 +343,8 @@
 
     type();
 
-    // Очистка загруженных файлов при закрытии или обновлении страницы
     window.addEventListener('beforeunload', function (e) {
-        fileInput.value = null; // Очистить выбранные файлы
+        fileInput.value = null;
     });
 </script>
 </body>
