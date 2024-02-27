@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title class="typewriter"></title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>.Log Checker</h1>
+<input type="file" id="fileInput" accept=".log,.log.gz" multiple>
+<button id="chooseFile"><h3>Выбрать файлы</h3>
+    <h3><p>.log | .log.gz</p></h3>
+</button>
+<div id="fileCount"></div>
+<div id="output"></div>
+<audio id="sirenSound1" src="./sound/siren1.mp3" preload="auto"></audio>
+<audio id="sirenSound2" src="./sound/siren2.mp3" preload="auto"></audio>
+<audio id="sirenSound3" src="./sound/siren3.mp3" preload="auto"></audio>
+<audio id="noMatchSound1" src="./sound/noMatch1.mp3" preload="auto"></audio>
+<audio id="noMatchSound2" src="./sound/noMatch2.mp3" preload="auto"></audio>
+<audio id="noMatchSound3" src="./sound/noMatch3.mp3" preload="auto"></audio>
+<footer>
+    <div class="foot">
+
+    </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.11/pako_inflate.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>
