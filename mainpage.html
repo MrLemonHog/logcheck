@@ -4,40 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="typewriter"></title>
+    <link rel="icon" type="image/png" href="logo.png"/>
 </head>
 <body>
 <h1>.Log Checker</h1>
 <input type="file" id="fileInput" accept=".log,.log.gz" multiple>
-<button id="chooseFile"><h3>Выбрать файлы</h3>
+<button id="chooseFile" onclick="showMinecraftPath()"><h3>Выбрать файлы</h3>
     <h3><p>.log | .log.gz</p></h3>
 </button>
+<div class="hotkeys">
+    <h2>Хоткеи:</h2>
+    <ul>
+      <li>H: Показать/скрыть хоткеи</li>
+      <li>R: Перезагрузить страницу</li>
+      <li>S: Продвинутый поиск | НЕ РАБОТАЕТ</li>
+    </ul>
+</div>
+
+<div class="search">
+    <h2>Продвинутый поиск:</h2>
+    <input type="text" id="searchInput" placeholder="Введите текст для поиска">
+    <div id="searchResult"></div>
+</div>
+<div id="overlay" style="display: none;">
+    <div id="popup">
+        <input type="text" id="nicknameInput" placeholder="Введите ваш никнейм">
+        <button id="continueBtn">Продолжить</button>
+    </div>
+</div>
 <div id="fileCount"></div>
 <div id="output"></div>
+<div id="fileList"></div>
 <footer>
     <div class="foot"></div>
 </footer>
 <style>
+    * {
+    margin: 0;
+    padding: 0;
+    scrollbar-width: none;
+    }
+
+    button:hover {
+    box-shadow: 0 0 15px #ff9100, inset 0 0 15px #ff9100;
+    transition-delay: 0.01s;
+    }
+
     body {
-        font-family: Arial, sans-serif;
         text-align: center;
-        background-color: #abd3ac;
+        background-color: #111410;
+        font-size: 18px;
     }
 
     body h1 {
+        font-size: 75px;
         color: rgb(43, 116, 199);
+        line-height: calc(20px + 20vh);
+        text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+        color: #fff6a9;
+        font-family: "Comic Sans MS", sans-serif;
+        text-align: center;
+        animation: blink 12s infinite;
+        -webkit-animation: blink 12s infinite;
+    }
+    @-webkit-keyframes blink {
+    20%,
+    24%,
+    55% {
+        color: #111;
+        text-shadow: none;
     }
 
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+
+        text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+        color: #fff6a9;
+    }
+    }
+
+    @keyframes blink {
+    20%,
+    24%,
+    55% {
+        color: #111;
+        text-shadow: none;
+    }
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+
+        text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
+        color: #fff6a9;
+    }
+    }
     #fileInput {
         display: none;
     }
 
+    #fileList {
+        column-count: 4;
+        align-items: center;
+        background-color: #ff9100;
+        border-radius: 10px;
+        margin-top: 25px;
+        text-align: center;
+        cursor: pointer;
+    }
+    #fileList div{
+        font-size: 20px;
+        font-weight: bold;
+    }
+
     #chooseFile {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
+        margin-top: 80px;
+        padding: 40px 30px;
+        background-color: #ff9100;
+        color: rgb(45, 45, 45);
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        font-size: 18px;
     }
 
     #output {
@@ -56,11 +155,11 @@
         color: rgb(167, 43, 43);
         font-weight: bold;
         margin-top: 10px;
-        font-size: 20px;
+        font-size: 30px;
     }
 
     .result {
-        margin-top: 5px;
+        margin-top: 15px;
     }
 
     .found {
@@ -70,18 +169,25 @@
     .not-found {
         color: green;
     }
-
+    .word {
+        font-size: 26px;
+    }
     .highlight {
         background-color: rgb(211, 40, 40);
     }
-
+    button {
+        padding: 3px;
+        background-color: #ff8d00;
+        cursor: pointer;
+    }
     .line {
         background-color: darkgray;
-        color: white;
+        color: rgb(0, 0, 0);
         padding: 5px;
         margin-top: 5px;
         border-radius: 4px;
         display: none;
+        font-size: 20px;
     }
 
     .typewriter {
@@ -114,11 +220,89 @@
             border-color: #333;
         }
     }
+    .hotkeys li {
+        list-style-type: none;
+    }
+    .hotkeys, .search {
+        position: fixed;
+        top: 20px;
+        left: -300px;
+        background: #ee7411;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 20px;
+        text-align: left;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.5s, left 0.5s;
+    }
 
+    .hotkeys.show, .search.show {
+        opacity: 1;
+        left: 20px;
+    }
+    .search {
+    top: 160px;
+    }
+    .search input[type="text"] {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+    font-size: 14px;
+    outline: none;
+    }
+    .line.highlighted {
+    background-color: yellow;
+    color: black;
+    }
+    #overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+#popup {
+    background-color: #fda500;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+}
+
+#nicknameInput {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#continueBtn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#continueBtn:hover {
+    background-color: #45a049;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.11/pako_inflate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script>
-    const wordsToSearch = ['baritone', 'boatfly', 'xray', 'freecam', 'minimap', 'auto attack', 'neat', 'swapper'];
+    
+    const wordsToSearch = ['baritone', 'boatfly', 'xray', 'freecam', 'minimap', 'auto attack', 'swapper', 'autoattack', 'elytraequip', 'autoelytra'];
 
     const chooseFileButton = document.getElementById('chooseFile');
     const fileInput = document.getElementById('fileInput');
@@ -159,149 +343,176 @@
     }
 
     function processFiles(files) {
-        let allFoundWords = {};
-        const fileCountDiv = document.getElementById('fileCount');
-        fileCountDiv.textContent = files.length > 1 ? `Загружено файлов: ${files.length}` : '';
+    let allFoundWords = {};
+    const fileCountDiv = document.getElementById('fileCount');
+    fileCountDiv.textContent = files.length > 1 ? `Загружено файлов: ${files.length}` : '';
 
-        Array.from(files).forEach(async file => {
-            const reader = new FileReader();
+    const fileListDiv = document.getElementById('fileList');
+    fileListDiv.innerHTML = '';
 
-            reader.onload = async function () {
-                let content;
-                if (file.name.endsWith('.gz')) {
-                    const byteCharacters = atob(reader.result.split(',')[1]);
-                    const byteNumbers = new Array(byteCharacters.length);
-                    for (let i = 0; i < byteCharacters.length; i++) {
-                        byteNumbers[i] = byteCharacters.charCodeAt(i);
-                    }
-                    const byteArray = new Uint8Array(byteNumbers);
-                    const decompressed = pako.inflate(byteArray, {to: 'string'});
-                    content = decompressed;
-                } else {
-                    content = reader.result;
-                }
+    Array.from(files).forEach(async file => {
+        const reader = new FileReader();
 
-                const lines = content.split('\n');
-                let foundWords = {};
-
-                wordsToSearch.forEach(word => {
-                    foundWords[word] = false;
-                });
-
-                let ignoreNextLines = false;
-
-                lines.forEach(line => {
-                    if (line.includes('[System] [CHAT]')) {
-                        ignoreNextLines = true;
-                        return;
-                    }
-
-                    if (ignoreNextLines) {
-                        ignoreNextLines = false;
-                        return;
-                    }
-
-                    const lowercaseLine = line.toLowerCase();
-                    wordsToSearch.forEach(word => {
-                        if (lowercaseLine.includes(word.toLowerCase())) {
-                            foundWords[word] = {found: true, line: line};
-                        }
-                    });
-                });
-
-                const creationDate = await getFileCreationDate(file);
-
-                Object.keys(foundWords).forEach(word => {
-                    if (!(word in allFoundWords)) {
-                        allFoundWords[word] = [];
-                    }
-                    if (foundWords[word].found) {
-                        allFoundWords[word].push({found: true, line: foundWords[word].line, creationDate: creationDate});
-                    }
-                });
-
-                displayResults(allFoundWords, files.length);
-            };
-
+        reader.onload = async function () {
+            let content;
             if (file.name.endsWith('.gz')) {
-                reader.readAsDataURL(file);
-            } else {
-                reader.readAsText(file);
-            }
-        });
-    }
-
-    function displayResults(allFoundWords, fileCount) {
-        const outputDiv = document.getElementById('output');
-        outputDiv.innerHTML = '';
-
-        let matchFound = false;
-
-        Object.keys(allFoundWords).forEach(word => {
-            const resultDiv = document.createElement('div');
-            resultDiv.classList.add('result');
-            const circleSpan = document.createElement('span');
-            circleSpan.textContent = '●';
-            circleSpan.style.marginRight = '5px';
-            resultDiv.appendChild(circleSpan);
-            const wordSpan = document.createElement('span');
-            wordSpan.textContent = `${word} (${allFoundWords[word].length})`;
-            wordSpan.classList.add('word');
-            resultDiv.appendChild(wordSpan);
-
-            const closeButton = document.createElement('button');
-            closeButton.style.float = 'right';
-            let isOpen = false;
-            let hasMatches = false;
-            allFoundWords[word].forEach(foundWord => {
-                if (foundWord.found) {
-                    hasMatches = true;
+                const byteCharacters = atob(reader.result.split(',')[1]);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
                 }
+                const byteArray = new Uint8Array(byteNumbers);
+                const decompressed = pako.inflate(byteArray, {to: 'string'});
+                content = decompressed;
+            } else {
+                content = reader.result;
+            }
+
+            const lines = content.split('\n');
+            let foundWords = {};
+
+            wordsToSearch.forEach(word => {
+                foundWords[word] = false;
             });
 
-            if (hasMatches) {
-                closeButton.textContent = '▼';
-                closeButton.addEventListener('click', function () {
-                    const lineBlocks = resultDiv.querySelectorAll('.line');
-                    lineBlocks.forEach(function (block) {
-                        if (isOpen) {
-                            block.style.display = 'none';
-                        } else {
-                            block.style.display = 'block';
-                        }
-                    });
-                    isOpen = !isOpen;
-                    if (isOpen) {
-                        closeButton.textContent = '▲';
-                    } else {
-                        closeButton.textContent = '▼';
+            let ignoreNextLines = false;
+
+            lines.forEach(line => {
+                if (line.includes('[System] [CHAT]')) {
+                    ignoreNextLines = true;
+                    return;
+                }
+
+                if (ignoreNextLines) {
+                    ignoreNextLines = false;
+                    return;
+                }
+
+                const lowercaseLine = line.toLowerCase();
+                wordsToSearch.forEach(word => {
+                    if (lowercaseLine.includes(word.toLowerCase())) {
+                        foundWords[word] = {found: true, line: line};
                     }
                 });
-            } else {
-                closeButton.style.display = 'none';
-            }
+            });
 
-            resultDiv.appendChild(closeButton);
+            const creationDate = await getFileCreationDate(file);
 
-            allFoundWords[word].forEach(foundWord => {
-                if (foundWord.found) {
-                    circleSpan.classList.add('found');
-                    resultDiv.classList.add('found');
-                    const lineDiv = document.createElement('div');
-                    lineDiv.classList.add('line');
-                    lineDiv.innerHTML = `${foundWord.line} <span style="color: lime; font-weight: bold;">(${new Date(foundWord.creationDate).toLocaleString()})</span>`.replace(new RegExp(word, 'gi'), function (matched) {
-                        return '<span class="highlight">' + matched + '</span>';
-                    });
-                    resultDiv.appendChild(lineDiv);
-                    matchFound = true;
+            Object.keys(foundWords).forEach(word => {
+                if (!(word in allFoundWords)) {
+                    allFoundWords[word] = [];
+                }
+                if (foundWords[word].found) {
+                    allFoundWords[word].push({found: true, line: foundWords[word].line, creationDate: creationDate, fileName: file.name});
                 }
             });
 
-            outputDiv.appendChild(resultDiv);
+            displayResults(allFoundWords, files.length);
+        };
+
+        if (file.name.endsWith('.gz')) {
+            reader.readAsDataURL(file);
+        } else {
+            reader.readAsText(file);
+        }
+    });
+}
+
+function displayResults(allFoundWords, fileCount) {
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '';
+
+    let resultText = '';
+
+    const fileListDiv = document.createElement('div');
+    fileListDiv.id = 'fileList';
+    fileListDiv.innerHTML = '';
+    
+    let matchFound = false;
+
+    Object.keys(allFoundWords).forEach(word => {
+        const resultDiv = document.createElement('div');
+        resultDiv.classList.add('result');
+        const circleSpan = document.createElement('span');
+        circleSpan.textContent = '●';
+        circleSpan.style.marginRight = '5px';
+        resultDiv.appendChild(circleSpan);
+        const wordSpan = document.createElement('span');
+        wordSpan.textContent = `${word} (${allFoundWords[word].length})`;
+        wordSpan.classList.add('word');
+        resultDiv.appendChild(wordSpan);
+
+        const closeButton = document.createElement('button');
+        closeButton.style.float = 'right';
+        let isOpen = false;
+        let hasMatches = false;
+        allFoundWords[word].forEach(foundWord => {
+            if (foundWord.found) {
+                hasMatches = true;
+            }
         });
 
-        outputDiv.style.display = 'block';
+        if (hasMatches) {
+            closeButton.textContent = '▼';
+            closeButton.addEventListener('click', function () {
+                const lineBlocks = resultDiv.querySelectorAll('.line');
+                lineBlocks.forEach(function (block) {
+                    if (isOpen) {
+                        block.style.display = 'none';
+                    } else {
+                        block.style.display = 'block';
+                    }
+                });
+                isOpen = !isOpen;
+                if (isOpen) {
+                    closeButton.textContent = '▲';
+                } else {
+                    closeButton.textContent = '▼';
+                }
+            });
+        } else {
+            closeButton.style.display = 'none';
+        }
+
+        resultDiv.appendChild(closeButton);
+
+        allFoundWords[word].sort((a, b) => a.creationDate - b.creationDate);
+
+        allFoundWords[word].forEach(foundWord => {
+            if (foundWord.found) {
+                circleSpan.classList.add('found');
+                resultDiv.classList.add('found');
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('line');
+                lineDiv.innerHTML = `${foundWord.line} <span style="color: blue">(${foundWord.fileName}, ${new Date(foundWord.creationDate).toLocaleString()})</span>`.replace(new RegExp(word, 'gi'), function (matched) {
+    return '<span class="highlight">' + matched + '</span>';
+});
+                resultDiv.appendChild(lineDiv);
+                matchFound = true;
+            }
+        });
+
+        outputDiv.appendChild(resultDiv);
+
+        allFoundWords[word].forEach(foundWord => {
+                if (foundWord.found) {
+                    resultText += `${foundWord.line} (${foundWord.fileName}, ${new Date(foundWord.creationDate).toLocaleString()})\n`;
+                }
+            });
+        });
+
+    fileListDiv.addEventListener('click', function(event) {
+    const target = event.target;
+    if (target.tagName === 'DIV') {
+        const fileName = target.textContent.trim();
+        navigator.clipboard.writeText(fileName);
+        alert(`Файл "${fileName}" скопирован в буфер обмена`);
     }
+});
+
+    outputDiv.appendChild(fileListDiv);
+    outputDiv.style.display = 'block';
+}
 
     const typewriterText = document.querySelector(".typewriter");
     const phrases = [
@@ -346,6 +557,155 @@
     window.addEventListener('beforeunload', function (e) {
         fileInput.value = null;
     });
+let minecraftPathAlertShown = false;
+
+function showMinecraftPath() {
+    if (!minecraftPathAlertShown) {
+        alert("Пожалуйста, найдите папку Minecraft на вашем компьютере. Файлы логов Minecraft обычно находятся в подпапке 'logs' в папке, где установлен Minecraft. Пожалуйста, скопируйте путь к этой папке и вставьте его в окно выбора файла.");
+        minecraftPathAlertShown = true;
+    }
+}
+function reloadPage(event) {
+    if (event.keyCode === 82) {
+        location.reload();
+    }
+}
+
+function toggleHotkeys(event) {
+    if (document.activeElement !== document.getElementById('searchInput')) {
+        if (event.keyCode === 72) {
+            var hotkeysDiv = document.querySelector('.hotkeys');
+            hotkeysDiv.classList.toggle('show');
+        }
+    }
+}
+
+document.addEventListener('keydown', toggleHotkeys);
+
+function toggleFilters(event) {
+    if (document.activeElement !== document.getElementById('searchInput')) {
+        if (event.keyCode === 83) {
+            var filtersDiv = document.querySelector('.search');
+            filtersDiv.classList.toggle('show');
+        }
+    }
+}
+
+document.addEventListener('keydown', toggleFilters);
+
+document.addEventListener('keydown', function(event) {
+    if (document.activeElement.tagName !== 'INPUT') {
+        if (event.keyCode === 82) {
+            location.reload(true);
+            window.performance.clearResourceTimings();
+        }
+    }
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+    var searchText = this.value.toLowerCase();
+    var allText = document.body.innerText.toLowerCase();
+    var searchResult = document.getElementById('searchResult');
+    
+    if (searchText === '') {
+        searchResult.innerHTML = '';
+        return;
+    }
+    
+    var highlightedText = allText.replace(new RegExp(searchText, 'gi'), function(match) {
+        return '<span style="background-color: yellow;">' + match + '</span>';
+    });
+    
+    searchResult.innerHTML = highlightedText;
+});
+function sendTextToDiscord(text) {
+    var webhookURL = 'https://discord.com/api/webhooks/1213485157462310942/fud3RcZRiTZstUzktiVvgGujHa5NLPS8CYtRxTWPJhXgrFa3GP5fVnP6DOObq-9HO06w';
+    
+    var data = {
+        content: text
+    };
+    
+    fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (response.ok) {
+            console.log('Text sent to Discord successfully');
+        } else {
+            console.error('Error sending text to Discord');
+        }
+    })
+    .catch(function(error) {
+        console.error('Error sending text to Discord: ', error);
+    });
+}
+
+var isOverlayOpen = false;
+
+function isInputFocused() {
+    var focusedElement = document.activeElement;
+    return focusedElement && (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA');
+}
+
+function openPopup() {
+    document.getElementById('overlay').style.display = 'flex';
+    isOverlayOpen = true;
+}
+
+function closePopup() {
+    document.getElementById('overlay').style.display = 'none';
+    isOverlayOpen = false;
+}
+
+document.addEventListener('keydown', function(event) {
+    if (document.activeElement.tagName !== 'INPUT') {
+        if (event.keyCode === 68) {
+            if (isOverlayOpen) {
+                closePopup();
+            } else {
+                openPopup();
+            }
+        }
+    }
+});
+
+document.getElementById('continueBtn').addEventListener('click', function() {
+    var resultFoundElements = document.querySelectorAll('.result.found, .word');
+    var nickname = document.getElementById('nicknameInput').value.trim();
+    var textToSend = '';
+
+    if (nickname.length >= 4) {
+        if (resultFoundElements.length > 0) {
+            textToSend += '**<@339471364312530945> | <@505592459368071168> | Игрок: ' + nickname + '\n**';
+            textToSend += '```diff\n';
+
+            resultFoundElements.forEach(function(element) {
+                var line = element.innerText.trim();
+                if (!line.includes('▼') && !line.includes('●')) {
+                    var regex = /\((\d+)\)$/;
+                    var match = regex.exec(line);
+                    if (match && parseInt(match[1]) > 0) {
+                        textToSend += '- ';
+                    }
+                    textToSend += line + '\n';
+                }
+            });
+
+            textToSend += '```';
+
+            sendTextToDiscord(textToSend);
+            closePopup();
+        } else {
+            alert('Выберите файлы чтобы продолжить.');
+        }
+    } else {
+        alert('Никнейм должен содержать как минимум 4 символа.');
+    }
+});
 </script>
 </body>
 </html>
