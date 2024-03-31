@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog Log-cheker</title>
+    <link rel="icon" type="image/png" href="/img/logo-changelog.png"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #4e4e4e;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: rgb(253, 212, 158);
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            margin-bottom: 10px;
+            background-color: #3d3d3d;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: antiquewhite;
+        }
+        .version {
+            font-size: 20px;
+            font-weight: bold;
+            color: rgb(253, 212, 158);
+        }
+        .date {
+            color: rgb(253, 212, 158);
+            margin-bottom: 15px;
+        }
+        .added::before,
+        .removed::before,
+        .changed::before {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+        .added::before {
+            content: "+";
+            color: rgb(44, 209, 44);
+            margin-right: 5px;
+        }
+        .removed::before {
+            content: "-";
+            color: rgb(249, 21, 21);
+            margin-right: 5px;
+        }
+        .changed::before {
+            content: "•";
+            color: rgb(0, 208, 255);
+            margin-right: 5px;
+        }
+        .entry {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Changelog Log-cheker</h1>
+        <ul>
+            <li>
+                <div class="version">Обновление 1.0.0 "Бета-тестирование завершено"</div>
+                <div class="date">31 марта 2024 г.</div>
+                <div class="entry added">Добавлен changelog</div>
+                <div class="entry added">Добавлен блок слева для отображения найденных модов, библиотек и ресурспаков</div>
+                <div class="entry added">Добавлен футер</div>
+                <div class="entry added">Добавлен блок для добавления ключевых слов для поиска в файлах .log и .log.gz</div>
+                <div class="entry removed">Исправлены баги</div>
+                <div class="entry removed">Удалены лишние строки кода</div>
+                <div class="entry changed">Полное обновление UI и UX</div>
+                <div class="entry changed">Изменён логотип</div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

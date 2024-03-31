@@ -3,40 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="typewriter"></title>
-    <link rel="icon" type="image/png" href="logo.png"/>
+    <title>Log-checker</title>
+    <link rel="icon" type="image/png" href="/img/logo.png"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JF528ZMJKG"></script>
+    <meta property="og:title" content="Log-checker">
+    <meta property="og:description" content="Проверка .log и .log.gz из папки logs майнкрафт на ключевые слова">
+    <meta property="og:image" content="https://media.discordapp.net/attachments/1119361246836301834/1221466078274916473/zjjsfcg3.png?ex=6612adee&is=660038ee&hm=7aed32ebdf79e39ff8ac3279fefe46578a080faa70b11dfc6605d2c2bfdeb41c&=&format=webp&quality=lossless&width=671&height=671">
+    <meta property="og:url" content="https://mrlemonhog.github.io/logcheck/mainpage">
+    <meta property="og:type" content="website">
 </head>
 <body>
+    <div class="noise"></div>
+<div class="obsidian">
 <h1>.Log Checker</h1>
+</div>
 <input type="file" id="fileInput" accept=".log,.log.gz" multiple>
-<button id="chooseFile" onclick="showMinecraftPath()"><h3>Выбрать файлы</h3>
+<button id="chooseFile" onclick="showMinecraftPath()" style="margin-top: 40px; padding: 40px 30px; background-color: #ff9100; color: rgb(45, 45, 45); border: none; border-radius: 4px; cursor: pointer; font-size: 18px;">
+    <h3>Выбрать файлы</h3>
     <h3><p>.log | .log.gz</p></h3>
 </button>
-<div class="hotkeys">
-    <h2>Хоткеи:</h2>
-    <ul>
-      <li>H: Показать/скрыть хоткеи</li>
-      <li>R: Перезагрузить страницу</li>
-      <li>S: Продвинутый поиск | НЕ РАБОТАЕТ</li>
-    </ul>
-</div>
-
-<div class="search">
-    <h2>Продвинутый поиск:</h2>
-    <input type="text" id="searchInput" placeholder="Введите текст для поиска">
-    <div id="searchResult"></div>
-</div>
-<div id="overlay" style="display: none;">
-    <div id="popup">
-        <input type="text" id="nicknameInput" placeholder="Введите ваш никнейм">
-        <button id="continueBtn">Продолжить</button>
+<div class="center-inputwords">
+    <div class="inputwords">
+        <input class="click-input" type="text" id="newWordInput" placeholder="Напишите новое ключ-слово">
+        <button onclick="addWord()">Добавить</button>
     </div>
 </div>
+    <div class="added-words" id="addedWordsContainer">
+</div>
+
 <div id="fileCount"></div>
-<div id="output"></div>
+<div class="wrapper">
+    <div id="mods" class="side-block">
+        <div id="modsOutput"></div>
+    </div>
+        <div id="output">
+    </div>
+</div>
 <div id="fileList"></div>
-<footer>
-    <div class="foot"></div>
+<footer id="footer">
+    <div class="foot">
+        <div class="obsidian">
+            <div class="footer-info">
+                <div class="discord">
+                    <!-- <p>123</p> -->
+                </div>
+                <div class="center-footer">
+                    <div class="donate">
+                        <!-- <p>Поддержать разработку</p> -->
+                    </div>
+                    <div class="version">
+                        <a href="/pages/changelog.html"><p>Обновление: 1.0.0</p></a>
+                    </div>
+                    </div>
+                        <div class="dop-info">
+                    <div class="bug">
+                        <a href="https://forms.gle/diEn4ZQQ7FzM9JGw9" target="_blank"><p>Нашли баг?</p></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- <div class="end-portal">
+                <div class="glav-text">
+                    <p>В разработке</p>
+                </div>
+            </div>
+            <div class="end-portal-frame">
+                <div class="collaboration">
+                    <div class="servers">
+                        <a href="В разработке"><img src="/img/minecraft_title.png" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        <div class="end-portal"></div> -->
+    </div>
 </footer>
 <style>
     * {
@@ -58,7 +97,6 @@
 
     body h1 {
         font-size: 75px;
-        color: rgb(43, 116, 199);
         line-height: calc(20px + 20vh);
         text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000;
         color: #fff6a9;
@@ -66,6 +104,7 @@
         text-align: center;
         animation: blink 12s infinite;
         -webkit-animation: blink 12s infinite;
+        user-select: none;
     }
     @-webkit-keyframes blink {
     20%,
@@ -129,7 +168,6 @@
     }
 
     #chooseFile {
-        margin-top: 80px;
         padding: 40px 30px;
         background-color: #ff9100;
         color: rgb(45, 45, 45);
@@ -137,25 +175,27 @@
         border-radius: 4px;
         cursor: pointer;
         font-size: 18px;
+        user-select: none;
     }
 
     #output {
         display: none;
-        margin-top: 20px;
-        background-color: rgb(78, 78, 78);
+        margin-top: 10px;
+        background-color: #232234;
         padding: 10px;
         border-radius: 10px;
         text-align: left;
-        max-width: 80%;
+        max-width: 56%;
         margin-left: auto;
         margin-right: auto;
     }
 
     #fileCount {
-        color: rgb(167, 43, 43);
+        color: #ff9100;
         font-weight: bold;
         margin-top: 10px;
         font-size: 30px;
+        height: 50px;
     }
 
     .result {
@@ -170,7 +210,8 @@
         color: green;
     }
     .word {
-        font-size: 26px;
+        font-size: 30px;
+        color: #FFFFFF;
     }
     .highlight {
         background-color: rgb(211, 40, 40);
@@ -188,17 +229,6 @@
         border-radius: 4px;
         display: none;
         font-size: 20px;
-    }
-
-    .typewriter {
-        display: inline-block;
-        overflow: hidden;
-        border-right: 0.15em solid #333;
-        white-space: nowrap;
-        margin: 0;
-        font-size: 24px;
-        font-family: monospace;
-        animation: typing 3s steps(40, end), blink-caret 0.50s step-end infinite;
     }
 
     @keyframes typing {
@@ -220,89 +250,262 @@
             border-color: #333;
         }
     }
-    .hotkeys li {
-        list-style-type: none;
-    }
-    .hotkeys, .search {
-        position: fixed;
-        top: 20px;
-        left: -300px;
-        background: #ee7411;
-        padding: 10px;
-        border-radius: 10px;
-        font-size: 20px;
-        text-align: left;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 0.5s, left 0.5s;
-    }
-
-    .hotkeys.show, .search.show {
-        opacity: 1;
-        left: 20px;
-    }
-    .search {
-    top: 160px;
-    }
-    .search input[type="text"] {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    color: #000;
-    font-size: 14px;
-    outline: none;
-    }
-    .line.highlighted {
-    background-color: yellow;
-    color: black;
+    .highlighted {
+        background-color: yellow;
+        color: black;
     }
     #overlay {
-    display: none;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+    .hidden {
+        display: none;
+    }
+    .noise {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-}
+    background-image: url('/img/туман.gif');
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
+    animation: animateNoise 4s steps(10) infinite;
+    background-repeat: repeat;
+    background-position: center;
+    background-repeat: round;
+    background-size: 200px;
+    }
+    @keyframes animateNoise {
+    0%, 100% {
+        transform: translate3d(-2px, -2px, 0);
+    }
+    25% {
+        transform: translate3d(2px, 2px, 0);
+    }
+    50% {
+        transform: translate3d(-2px, 2px, 0);
+    }
+    75% {
+        transform: translate3d(2px, -2px, 0);
+    }
+    }
+    .obsidian {
+        position: relative;
+        width: 100%;
+        height: 150px;
+        background-image: url('/img/obsidian.png');
+        background-repeat: round;
+        background-size: contain;
+        background-repeat: initial;
+        background-repeat: repeat-x;
+    }
+    .obsidian h1{
+        position: absolute;
+        font-size: 80px;
+        text-align: center;
+        left: 50%;
+        top: 60px;
+        transform: translate(-50%, -50%);
+    }
+    .end-portal {
+        width: 100%;
+        height: 150px;
+        background-image: url('/img/end-portal.png');
+        background-repeat: round;
+        background-size: contain;
+        background-repeat: initial;
+        background-repeat: repeat-x;
+    }
+    .end-portal-frame {
+        align-items: center;
+        width: 100%;
+        height: 300px;
+        background-image: url('/img/end-portal-frame.png');
+        animation: moveBackground 120s linear infinite;
+    }
+    @keyframes moveBackground {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+    }
+    .wrapper {
+        display: flex;
+        align-items: stretch;
+    }
 
-#popup {
-    background-color: #fda500;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
-}
+    .side-block {
+        flex: 0 0 33%;
+        background-color: #232234;
+        overflow-y: auto;
+        border-radius: 10px;
+    }
+    #mods {
+        left: 0;
+        margin-left: 4.5%;
+        overflow-y: auto;
+        border-radius: 5px;
+        text-align: left;
+    }
+    #output {
+        flex: 1;
+        margin: 0 1%;
+    }
+    #modsOutput pre{
+        color: #FFFFFF;
+    }
+    .file-item {
+        position: relative;
+    }
+    .file-item:hover::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    #modsOutput pre {
+        word-wrap: break-word;
+        font-family: monospace;
+        overflow: auto;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff;
+    }
+    footer {
+        display: none;
+    }
 
-#nicknameInput {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    .glav-text {
+        padding-top: 50%;
+        text-align: center;
+        font-size: 30px;
+        color: #ffffff;
+        font-family: "Marker Felt", fantasy;
+        text-align: center;
+        text-shadow: 0 0 2px #9a16ce, 0 0 7px #9a16ce, 0 0 10px #9a16ce, 0 0 20px #9a16ce, 0 0 30px #ea00ff, 0 0 5px #9a16ce, 0 0 49px #ea00ff;
+        padding: 1.5%;
+    }
 
-#continueBtn {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .servers {
+        display: flex;
+        flex-direction: row;
+        height: 225px;
+        justify-content: space-around;
+        align-content: stretch;
+        align-items: center;
+    }
 
-#continueBtn:hover {
-    background-color: #45a049;
-}
+    .servers img{
+        width: 310px;
+        transition: box-shadow 0.3s ease-in-out;
+        flex-direction: column;
+        height: 100px;
+        margin-bottom: 2.5%;
+    }
+
+    .servers img:hover{
+        width: 310px;
+        box-shadow: 0 0 2px #9a16ce, 0 0 7px #9a16ce, 0 0 10px #9a16ce, 0 0 20px #9a16ce, 0 0 30px #ea00ff;
+        text-align: center;
+        cursor: pointer;
+    }
+    .collaboration {
+        position: relative;
+        flex-direction: row;
+        height: 300px;
+    }
+    .added-words {
+        margin-top: 20px;
+    }
+    .added-word {
+        display: inline-block;
+        padding: 5px 10px;
+        margin-right: 5px;
+        background-color: #ffa602;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .added-word:hover {
+        background-color: #ffa602;
+    }
+    .remove-word {
+        color: red;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    .inputwords {
+        margin-top: 20px;
+        border-radius: 5px;
+        background-color: #ee7411;
+        flex-direction: column;
+        width: 22vh;
+        padding: 10px;
+        user-select: none;
+    }
+    .center-inputwords {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .inputwords button{
+        width: 22vh;
+        height: 4vh;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: none;
+        background-color: #b2ce16;
+    }
+    .inputwords input{
+        height: 25px;
+        border-radius: 5px;
+        width: 22vh;
+        border: none;
+        text-align: center;
+    }
+    .footer-info {
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        bottom: 45%;
+    }
+    .discord {
+        color: #FFFFFF;
+        flex-basis: 0;
+    }
+    .donate {
+        color: #FFFFFF;
+        flex-basis: 0;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .dop-info {
+        color: #FFFFFF;
+        text-align: right;
+    }
+    .bug a {
+        color: inherit;
+    }
+    .version a{
+        color: inherit;
+        color: #FFFFFF;
+    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.11/pako_inflate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script>
-    
-    const wordsToSearch = ['baritone', 'boatfly', 'xray', 'freecam', 'minimap', 'auto attack', 'swapper', 'autoattack', 'elytraequip', 'autoelytra'];
+    const wordsToSearch = ['baritone', 'boatfly', 'xray', 'freecam', 'minimap', 'auto attack', 'swapper', 'autoattack', 'elytraequip', 'autoelytra', 'autofish', 'orthocamera', 'cheatutils', 'motorassistance', 'optimalaim', 'collisionfix'];
 
     const chooseFileButton = document.getElementById('chooseFile');
     const fileInput = document.getElementById('fileInput');
@@ -333,7 +536,7 @@
     function getFileCreationDate(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function () {
                 const blob = new Blob([reader.result]);
                 const date = file.lastModifiedDate || file.lastModified;
                 resolve(date);
@@ -342,370 +545,638 @@
         });
     }
 
+    function addWord() {
+        const newWordInput = document.getElementById('newWordInput');
+        const word = newWordInput.value.trim();
+
+        if (word !== '') {
+            wordsToSearch.push(word);
+            const addedWordsContainer = document.getElementById('addedWordsContainer');
+            const addedWordElement = document.createElement('div');
+            addedWordElement.classList.add('added-word');
+            addedWordElement.textContent = word;
+
+            addedWordElement.addEventListener('mouseenter', function () {
+                const removeButton = document.createElement('span');
+                removeButton.classList.add('remove-word');
+                removeButton.textContent = '✖';
+                removeButton.onclick = function () {
+                    const wordToRemove = addedWordElement.textContent.trim();
+                    const index = wordsToSearch.indexOf(wordToRemove);
+                    if (index !== -1) {
+                        wordsToSearch.splice(index, 1);
+                    }
+                    addedWordElement.remove();
+                };
+                addedWordElement.appendChild(removeButton);
+            });
+
+            addedWordElement.addEventListener('mouseleave', function () {
+                const removeButton = addedWordElement.querySelector('.remove-word');
+                if (removeButton) {
+                    removeButton.remove();
+                }
+            });
+
+            addedWordElement.addEventListener('click', function () {
+                addedWordElement.remove();
+            });
+
+            addedWordsContainer.appendChild(addedWordElement);
+            newWordInput.value = '';
+        }
+    }
+
+    function showFooter() {
+        const footer = document.getElementById('footer');
+        footer.style.display = 'block';
+    }
+
+    function extractModsInfo(content) {
+        const startIndex = content.indexOf('mods:');
+        const endIndex = content.indexOf('[main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=file');
+        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+            let modsInfo = content.substring(startIndex, endIndex);
+            modsInfo = modsInfo.replace('mods:', '');
+
+            modsInfo = modsInfo.split('\n').filter(line =>
+                !line.includes('|-- fabric') && !line.includes('\\-- fabric') &&
+                !line.includes('|-- org_jetbrains_kotlin') && !line.includes('\\-- org_jetbrains_kotlin')
+            ).join('\n');
+
+            return modsInfo.trim();
+        }
+        return null;
+    }
+
+    function extractAdditionalInfo(content) {
+        const startIndex = content.indexOf('[Render thread/INFO]: Reloading ResourceManager:');
+        const endIndex = content.indexOf('[', startIndex + 1);
+        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+            let additionalInfo = content.substring(startIndex, endIndex);
+
+            const closingBracketIndex = additionalInfo.indexOf('),');
+
+            if (closingBracketIndex !== -1) {
+                additionalInfo = additionalInfo.substring(closingBracketIndex + 2);
+                additionalInfo = additionalInfo.replace(/file\//g, '');
+                return additionalInfo.trim();
+            }
+        }
+        return null;
+    }
+
+    const loadedFiles = {};
+
     function processFiles(files) {
-    let allFoundWords = {};
-    const fileCountDiv = document.getElementById('fileCount');
-    fileCountDiv.textContent = files.length > 1 ? `Загружено файлов: ${files.length}` : '';
+        let allFoundWords = {};
+        const fileCountDiv = document.getElementById('fileCount');
+        fileCountDiv.textContent = files.length > 1 ? `Загружено файлов: ${files.length}` : '';
 
-    const fileListDiv = document.getElementById('fileList');
-    fileListDiv.innerHTML = '';
+        const fileListDiv = document.getElementById('fileList');
+        fileListDiv.innerHTML = '';
 
-    Array.from(files).forEach(async file => {
-        const reader = new FileReader();
+        Array.from(files).forEach(async file => {
+            const reader = new FileReader();
 
-        reader.onload = async function () {
-            let content;
-            if (file.name.endsWith('.gz')) {
-                const byteCharacters = atob(reader.result.split(',')[1]);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const decompressed = pako.inflate(byteArray, {to: 'string'});
-                content = decompressed;
-            } else {
-                content = reader.result;
-            }
-
-            const lines = content.split('\n');
-            let foundWords = {};
-
-            wordsToSearch.forEach(word => {
-                foundWords[word] = false;
-            });
-
-            let ignoreNextLines = false;
-
-            lines.forEach(line => {
-                if (line.includes('[System] [CHAT]')) {
-                    ignoreNextLines = true;
-                    return;
-                }
-
-                if (ignoreNextLines) {
-                    ignoreNextLines = false;
-                    return;
-                }
-
-                const lowercaseLine = line.toLowerCase();
-                wordsToSearch.forEach(word => {
-                    if (lowercaseLine.includes(word.toLowerCase())) {
-                        foundWords[word] = {found: true, line: line};
+            reader.onload = async function () {
+                let content;
+                if (file.name.endsWith('.gz')) {
+                    const byteCharacters = atob(reader.result.split(',')[1]);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
                     }
-                });
-            });
-
-            const creationDate = await getFileCreationDate(file);
-
-            Object.keys(foundWords).forEach(word => {
-                if (!(word in allFoundWords)) {
-                    allFoundWords[word] = [];
-                }
-                if (foundWords[word].found) {
-                    allFoundWords[word].push({found: true, line: foundWords[word].line, creationDate: creationDate, fileName: file.name});
-                }
-            });
-
-            displayResults(allFoundWords, files.length);
-        };
-
-        if (file.name.endsWith('.gz')) {
-            reader.readAsDataURL(file);
-        } else {
-            reader.readAsText(file);
-        }
-    });
-}
-
-function displayResults(allFoundWords, fileCount) {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '';
-
-    let resultText = '';
-
-    const fileListDiv = document.createElement('div');
-    fileListDiv.id = 'fileList';
-    fileListDiv.innerHTML = '';
-    
-    let matchFound = false;
-
-    Object.keys(allFoundWords).forEach(word => {
-        const resultDiv = document.createElement('div');
-        resultDiv.classList.add('result');
-        const circleSpan = document.createElement('span');
-        circleSpan.textContent = '●';
-        circleSpan.style.marginRight = '5px';
-        resultDiv.appendChild(circleSpan);
-        const wordSpan = document.createElement('span');
-        wordSpan.textContent = `${word} (${allFoundWords[word].length})`;
-        wordSpan.classList.add('word');
-        resultDiv.appendChild(wordSpan);
-
-        const closeButton = document.createElement('button');
-        closeButton.style.float = 'right';
-        let isOpen = false;
-        let hasMatches = false;
-        allFoundWords[word].forEach(foundWord => {
-            if (foundWord.found) {
-                hasMatches = true;
-            }
-        });
-
-        if (hasMatches) {
-            closeButton.textContent = '▼';
-            closeButton.addEventListener('click', function () {
-                const lineBlocks = resultDiv.querySelectorAll('.line');
-                lineBlocks.forEach(function (block) {
-                    if (isOpen) {
-                        block.style.display = 'none';
-                    } else {
-                        block.style.display = 'block';
-                    }
-                });
-                isOpen = !isOpen;
-                if (isOpen) {
-                    closeButton.textContent = '▲';
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const decompressed = pako.inflate(byteArray, { to: 'string' });
+                    content = decompressed;
                 } else {
-                    closeButton.textContent = '▼';
+                    content = reader.result;
                 }
-            });
-        } else {
-            closeButton.style.display = 'none';
-        }
 
-        resultDiv.appendChild(closeButton);
+                loadedFiles[file.name] = content;
 
-        allFoundWords[word].sort((a, b) => a.creationDate - b.creationDate);
+                const modsInfo = extractModsInfo(content);
+                if (modsInfo) {
+                    const modsOutput = document.getElementById('modsOutput');
+                    modsOutput.innerHTML = '';
+                    const modsPre = document.createElement('pre');
+                    modsPre.innerText = modsInfo;
+                    modsOutput.appendChild(modsPre);
 
-        allFoundWords[word].forEach(foundWord => {
-            if (foundWord.found) {
-                circleSpan.classList.add('found');
-                resultDiv.classList.add('found');
-                const lineDiv = document.createElement('div');
-                lineDiv.classList.add('line');
-                lineDiv.innerHTML = `${foundWord.line} <span style="color: blue">(${foundWord.fileName}, ${new Date(foundWord.creationDate).toLocaleString()})</span>`.replace(new RegExp(word, 'gi'), function (matched) {
-    return '<span class="highlight">' + matched + '</span>';
-});
-                resultDiv.appendChild(lineDiv);
-                matchFound = true;
+                    const header = document.createElement('div');
+                    header.textContent = "Список найденных модов и библиотек:";
+                    header.style.color = "#ff9100";
+                    header.style.fontSize = "24px";
+                    modsOutput.insertBefore(header, modsOutput.firstChild);
+                }
+                const additionalInfo = extractAdditionalInfo(content);
+                if (additionalInfo) {
+                    const additionalHeader = document.createElement('p');
+                    additionalHeader.textContent = "Список найденных ресурспаков:";
+                    additionalHeader.style.color = "#ff9100";
+                    additionalHeader.style.fontSize = "24px";
+                    modsOutput.appendChild(additionalHeader);
+
+                    const additionalPre = document.createElement('pre');
+                    additionalPre.innerText = additionalInfo;
+                    additionalPre.style.whiteSpace = "pre-wrap";
+                    modsOutput.appendChild(additionalPre);
+                }
+                const block = document.createElement('div');
+                block.style.height = "30px";
+                block.style.width = "100%";
+                block.style.display = "flex";
+                block.style.justifyContent = "flex-end";
+                modsOutput.appendChild(block);
+
+                const buttonLeft = document.createElement('button');
+                buttonLeft.textContent = "Показать совпадения";
+                block.appendChild(buttonLeft);
+
+                buttonLeft.onclick = function () {
+                    const allPreTags = modsOutput.getElementsByTagName('pre');
+                    for (let i = 0; i < allPreTags.length; i++) {
+                        const pre = allPreTags[i];
+                        let content = pre.innerText;
+                        wordsToSearch.forEach(word => {
+                            const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                            content = content.replace(regex, `<span class="highlight">${word}</span>`);
+                        });
+                        pre.innerHTML = content;
+                    }
+                };
+
+                const button = document.createElement('button');
+                button.textContent = "Показать полный файл .log";
+                block.appendChild(button);
+
+                button.onclick = function () {
+                    modal.style.display = "block";
+                };
+
+                const modal = document.createElement('div');
+                modal.style.display = "none";
+                modal.style.position = "fixed";
+                modal.style.zIndex = "1";
+                modal.style.left = "0";
+                modal.style.top = "0";
+                modal.style.width = "100%";
+                modal.style.height = "100%";
+                modal.style.overflow = "none";
+                modal.style.backgroundColor = "rgba(0,0,0,0.4)";
+                document.body.appendChild(modal);
+
+                const fileList = document.createElement('div');
+                fileList.style.width = "10%";
+                fileList.style.height = "96%";
+                fileList.style.overflow = "auto";
+                fileList.style.margin = "1% 1% 1% 14%";
+                fileList.style.position = "absolute";
+                fileList.style.zIndex = "2";
+                fileList.style.top = "0";
+                fileList.style.left = "0";
+                fileList.style.backgroundColor = "orange";
+                fileList.style.borderRadius = "5px";
+                modal.appendChild(fileList);
+
+                const textBlock = document.createElement('div');
+                textBlock.style.backgroundColor = "orange";
+                textBlock.style.margin = " 1% 15% 15% 24%";
+                textBlock.style.padding = "20px";
+                textBlock.style.border = "1px solid #888";
+                textBlock.style.width = "60%";
+                textBlock.style.height = "91.5%";
+                textBlock.style.overflow = "auto";
+                textBlock.style.borderRadius = "5px";
+                textBlock.style.textAlign = "left";
+                modal.appendChild(textBlock);
+
+                Object.keys(loadedFiles).forEach(fileName => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.textContent = fileName;
+                    fileDiv.style.cursor = "pointer";
+                    fileDiv.onclick = function () {
+                        textBlock.innerHTML = '';
+                        const pre = document.createElement('pre');
+                        const fileContent = loadedFiles[fileName];
+                        const lines = fileContent.split('\n');
+                        const filteredLines = lines.filter(line => !line.includes('[Render thread/INFO]: [STDOUT]'));
+                        pre.textContent = filteredLines.join('\n');
+                        textBlock.appendChild(pre);
+
+                        modal.style.display = "block";
+                    }
+                    fileList.appendChild(fileDiv);
+                });
+
+                window.onclick = function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+                const lines = content.split('\n');
+                let foundWords = {};
+
+                wordsToSearch.forEach(word => {
+                    foundWords[word] = false;
+                });
+
+                let ignoreNextLines = false;
+
+                lines.forEach(line => {
+                    if (line.includes('[System] [CHAT]')) {
+                        ignoreNextLines = true;
+                        return;
+                    }
+
+                    if (ignoreNextLines) {
+                        ignoreNextLines = false;
+                        return;
+                    }
+
+                    const lowercaseLine = line.toLowerCase();
+                    wordsToSearch.forEach(word => {
+                        if (lowercaseLine.includes(word.toLowerCase())) {
+                            foundWords[word] = { found: true, line: line };
+                        }
+                    });
+                });
+
+                const creationDate = await getFileCreationDate(file);
+
+                Object.keys(foundWords).forEach(word => {
+                    if (!(word in allFoundWords)) {
+                        allFoundWords[word] = [];
+                    }
+                    if (foundWords[word].found) {
+                        allFoundWords[word].push({ found: true, line: foundWords[word].line, creationDate: creationDate, fileName: file.name });
+                    }
+                });
+
+                displayResults(allFoundWords, files.length);
+                displayLoadedFiles(loadedFiles);
+            };
+
+            if (file.name.endsWith('.gz')) {
+                reader.readAsDataURL(file);
+            } else {
+                reader.readAsText(file);
             }
         });
+        showFooter();
+    }
 
-        outputDiv.appendChild(resultDiv);
+    function displayResults(allFoundWords, fileCount) {
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = '';
 
-        allFoundWords[word].forEach(foundWord => {
+        let resultText = '';
+
+        const fileListDiv = document.createElement('div');
+        fileListDiv.id = 'fileList';
+        fileListDiv.innerHTML = '';
+
+        let matchFound = false;
+
+        Object.keys(allFoundWords).forEach(word => {
+            const resultDiv = document.createElement('div');
+            resultDiv.classList.add('result');
+            const circleSpan = document.createElement('span');
+            circleSpan.textContent = '●';
+            circleSpan.style.marginRight = '5px';
+            resultDiv.appendChild(circleSpan);
+            const wordSpan = document.createElement('span');
+            wordSpan.textContent = `${word} (${allFoundWords[word].length})`;
+            wordSpan.classList.add('word');
+            resultDiv.appendChild(wordSpan);
+
+            const closeButton = document.createElement('button');
+            closeButton.style.float = 'right';
+            let isOpen = false;
+            let hasMatches = false;
+            allFoundWords[word].forEach(foundWord => {
+                if (foundWord.found) {
+                    hasMatches = true;
+                }
+            });
+
+            if (hasMatches) {
+                closeButton.textContent = '▼';
+                closeButton.addEventListener('click', function () {
+                    const lineBlocks = resultDiv.querySelectorAll('.line');
+                    lineBlocks.forEach(function (block) {
+                        if (isOpen) {
+                            block.style.display = 'none';
+                        } else {
+                            block.style.display = 'block';
+                        }
+                    });
+                    isOpen = !isOpen;
+                    if (isOpen) {
+                        closeButton.textContent = '▲';
+                    } else {
+                        closeButton.textContent = '▼';
+                    }
+                });
+            } else {
+                closeButton.style.display = 'none';
+            }
+
+            resultDiv.appendChild(closeButton);
+
+            allFoundWords[word].sort((a, b) => a.creationDate - b.creationDate);
+
+            allFoundWords[word].forEach(foundWord => {
+                if (foundWord.found) {
+                    circleSpan.classList.add('found');
+                    resultDiv.classList.add('found');
+                    const lineDiv = document.createElement('div');
+                    lineDiv.classList.add('line');
+                    lineDiv.innerHTML = `${foundWord.line} <span style="color: blue">(${foundWord.fileName}, ${new Date(foundWord.creationDate).toLocaleString()})</span>`.replace(new RegExp(word, 'gi'), function (matched) {
+                        return '<span class="highlight">' + matched + '</span>';
+                    });
+                    resultDiv.appendChild(lineDiv);
+                    matchFound = true;
+                }
+            });
+
+            outputDiv.appendChild(resultDiv);
+
+            allFoundWords[word].forEach(foundWord => {
                 if (foundWord.found) {
                     resultText += `${foundWord.line} (${foundWord.fileName}, ${new Date(foundWord.creationDate).toLocaleString()})\n`;
                 }
             });
         });
 
-    fileListDiv.addEventListener('click', function(event) {
-    const target = event.target;
-    if (target.tagName === 'DIV') {
-        const fileName = target.textContent.trim();
-        navigator.clipboard.writeText(fileName);
-        alert(`Файл "${fileName}" скопирован в буфер обмена`);
+
+        outputDiv.appendChild(fileListDiv);
+        outputDiv.style.display = 'block';
     }
-});
-
-    outputDiv.appendChild(fileListDiv);
-    outputDiv.style.display = 'block';
-}
-
-    const typewriterText = document.querySelector(".typewriter");
-    const phrases = [
-        "Привет 👋",
-        "Попався?",
-        "Xray?",
-        "Иди уроки учи",
-        "Разбан за 478.00 ₽",
-        "Купи новый пк",
-        "Посади дерево",
-        "Где демка?",
-        "Герои3 лучшая игра",
-        "Пока 👋",
-    ];
-
-    let phraseIndex = 0;
-    let characterIndex = 0;
-
-    function type() {
-        if (characterIndex < phrases[phraseIndex].length) {
-            typewriterText.textContent += phrases[phraseIndex][characterIndex];
-            characterIndex++;
-            setTimeout(type, 100);
-        } else {
-            setTimeout(erase, 1000);
-        }
-    }
-
-    function erase() {
-        if (characterIndex > 0) {
-            typewriterText.textContent = phrases[phraseIndex].substring(0, characterIndex - 1);
-            characterIndex--;
-            setTimeout(erase, 50);
-        } else {
-            phraseIndex = (phraseIndex + 1) % phrases.length;
-            setTimeout(type, 250);
-        }
-    }
-
-    type();
 
     window.addEventListener('beforeunload', function (e) {
         fileInput.value = null;
     });
-let minecraftPathAlertShown = false;
+    let minecraftPathAlertShown = false;
 
-function showMinecraftPath() {
-    if (!minecraftPathAlertShown) {
-        alert("Пожалуйста, найдите папку Minecraft на вашем компьютере. Файлы логов Minecraft обычно находятся в подпапке 'logs' в папке, где установлен Minecraft. Пожалуйста, скопируйте путь к этой папке и вставьте его в окно выбора файла.");
-        minecraftPathAlertShown = true;
-    }
-}
-function reloadPage(event) {
-    if (event.keyCode === 82) {
-        location.reload();
-    }
-}
-
-function toggleHotkeys(event) {
-    if (document.activeElement !== document.getElementById('searchInput')) {
-        if (event.keyCode === 72) {
-            var hotkeysDiv = document.querySelector('.hotkeys');
-            hotkeysDiv.classList.toggle('show');
+    function showMinecraftPath() {
+        if (!minecraftPathAlertShown) {
+            alert("Пожалуйста, найдите папку Minecraft на вашем компьютере. Файлы логов Minecraft обычно находятся в подпапке 'logs' в папке, где установлен Minecraft. Пожалуйста, скопируйте путь к этой папке и вставьте его в окно выбора файла.");
+            minecraftPathAlertShown = true;
         }
     }
-}
 
-document.addEventListener('keydown', toggleHotkeys);
-
-function toggleFilters(event) {
-    if (document.activeElement !== document.getElementById('searchInput')) {
-        if (event.keyCode === 83) {
-            var filtersDiv = document.querySelector('.search');
-            filtersDiv.classList.toggle('show');
-        }
-    }
-}
-
-document.addEventListener('keydown', toggleFilters);
-
-document.addEventListener('keydown', function(event) {
-    if (document.activeElement.tagName !== 'INPUT') {
+    function reloadPage(event) {
         if (event.keyCode === 82) {
-            location.reload(true);
-            window.performance.clearResourceTimings();
+            location.reload();
         }
     }
-});
 
-document.getElementById('searchInput').addEventListener('input', function() {
-    var searchText = this.value.toLowerCase();
-    var allText = document.body.innerText.toLowerCase();
-    var searchResult = document.getElementById('searchResult');
-    
-    if (searchText === '') {
-        searchResult.innerHTML = '';
-        return;
+    let dragCounter = 0;
+    let gifTimer;
+
+    window.addEventListener('dragenter', handleDragEnter);
+    window.addEventListener('dragleave', handleDragLeave);
+    window.addEventListener('drop', handleDrop);
+
+    function handleDragEnter(event) {
+        event.preventDefault();
+        dragCounter++;
+        document.body.classList.add('dragover');
+        if (dragCounter === 1) {
+            accelerateGif();
+        }
     }
-    
-    var highlightedText = allText.replace(new RegExp(searchText, 'gi'), function(match) {
-        return '<span style="background-color: yellow;">' + match + '</span>';
-    });
-    
-    searchResult.innerHTML = highlightedText;
-});
-function sendTextToDiscord(text) {
-    var webhookURL = 'https://discord.com/api/webhooks/1213485157462310942/fud3RcZRiTZstUzktiVvgGujHa5NLPS8CYtRxTWPJhXgrFa3GP5fVnP6DOObq-9HO06w';
-    
-    var data = {
-        content: text
-    };
-    
-    fetch(webhookURL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(function(response) {
-        if (response.ok) {
-            console.log('Text sent to Discord successfully');
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) {
+            decelerateGif();
+        }
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        dragCounter = 0;
+        document.body.classList.remove('dragover');
+        decelerateGif();
+        processFiles(event.dataTransfer.files);
+    }
+
+    function accelerateGif() {
+        const gif = document.querySelector('.noise');
+        gif.style.animationDuration = '0.2s';
+        gif.style.animationIterationCount = 'infinite';
+        gif.style.animationTimingFunction = 'linear';
+    }
+
+    function decelerateGif() {
+        clearTimeout(gifTimer);
+        const gif = document.querySelector('.noise');
+        gif.style.animationDuration = '4s';
+        gif.style.animationIterationCount = 'infinite';
+        gif.style.animationTimingFunction = 'linear';
+    }
+
+    function displayLoadedFiles(files) {
+        const fileListDiv = document.getElementById('fileList');
+        fileListDiv.innerHTML = '';
+
+        Object.keys(files).forEach(fileName => {
+            const fileItem = document.createElement('div');
+            fileItem.textContent = fileName;
+            fileItem.classList.add('file-item');
+            fileItem.addEventListener('click', () => {
+                const fileContent = files[fileName];
+                displayFileContent(fileContent);
+                updateModsOutput(fileName);
+            });
+            fileListDiv.appendChild(fileItem);
+        });
+    }
+
+    function displayFileContent(content) {
+        const modsOutput = document.getElementById('modsOutput');
+        modsOutput.innerHTML = '';
+
+        const modsInfo = extractModsInfo(content);
+
+        if (modsInfo) {
+            const header = document.createElement('p');
+            header.textContent = "Список найденных модов и библиотек:";
+            header.style.color = "#ff9100";
+            header.style.fontSize = "24px";
+            modsOutput.appendChild(header);
+
+            const pre = document.createElement('pre');
+            pre.innerText = modsInfo;
+            modsOutput.appendChild(pre);
+        }
+
+        const additionalInfo = extractAdditionalInfo(content);
+
+        if (additionalInfo) {
+            const additionalHeader = document.createElement('p');
+            additionalHeader.textContent = "Список найденных ресурспаков:";
+            additionalHeader.style.color = "#ff9100";
+            additionalHeader.style.fontSize = "24px";
+            modsOutput.appendChild(additionalHeader);
+
+            const additionalPre = document.createElement('pre');
+            additionalPre.innerText = additionalInfo;
+            additionalPre.style.whiteSpace = "pre-wrap";
+            modsOutput.appendChild(additionalPre);
         } else {
-            console.error('Error sending text to Discord');
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = 'Дополнительная информация не найдена.';
+            modsOutput.appendChild(errorMessage);
         }
-    })
-    .catch(function(error) {
-        console.error('Error sending text to Discord: ', error);
-    });
-}
 
-var isOverlayOpen = false;
+        const block = document.createElement('div');
+        block.style.height = "30px";
+        block.style.width = "100%";
+        block.style.display = "flex";
+        block.style.justifyContent = "flex-end";
+        modsOutput.appendChild(block);
 
-function isInputFocused() {
-    var focusedElement = document.activeElement;
-    return focusedElement && (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA');
-}
+        const buttonLeft = document.createElement('button');
+                buttonLeft.textContent = "Показать совпадения";
+                block.appendChild(buttonLeft);
 
-function openPopup() {
-    document.getElementById('overlay').style.display = 'flex';
-    isOverlayOpen = true;
-}
+                buttonLeft.onclick = function () {
+                    const allPreTags = modsOutput.getElementsByTagName('pre');
+                    for (let i = 0; i < allPreTags.length; i++) {
+                        const pre = allPreTags[i];
+                        let content = pre.innerText;
+                        wordsToSearch.forEach(word => {
+                            const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                            content = content.replace(regex, `<span class="highlight">${word}</span>`);
+                        });
+                        pre.innerHTML = content;
+                    }
+                };
 
-function closePopup() {
-    document.getElementById('overlay').style.display = 'none';
-    isOverlayOpen = false;
-}
+        const button = document.createElement('button');
+        button.textContent = "Показать полный файл .log";
+        block.appendChild(button);
 
-document.addEventListener('keydown', function(event) {
-    if (document.activeElement.tagName !== 'INPUT') {
-        if (event.keyCode === 68) {
-            if (isOverlayOpen) {
-                closePopup();
-            } else {
-                openPopup();
+        button.onclick = function () {
+            modal.style.display = "block";
+        };
+        const modal = document.createElement('div');
+        modal.style.display = "none";
+        modal.style.position = "fixed";
+        modal.style.zIndex = "1";
+        modal.style.left = "0";
+        modal.style.top = "0";
+        modal.style.width = "100%";
+        modal.style.height = "100%";
+        modal.style.overflow = "none";
+        modal.style.backgroundColor = "rgba(0,0,0,0.4)";
+        document.body.appendChild(modal);
+
+        const fileList = document.createElement('div');
+        fileList.style.width = "10%";
+        fileList.style.height = "96%";
+        fileList.style.overflow = "auto";
+        fileList.style.margin = "1% 1% 1% 14%";
+        fileList.style.position = "absolute";
+        fileList.style.zIndex = "2";
+        fileList.style.top = "0";
+        fileList.style.left = "0";
+        fileList.style.backgroundColor = "orange";
+        fileList.style.borderRadius = "5px";
+        modal.appendChild(fileList);
+
+        const textBlock = document.createElement('div');
+        textBlock.style.backgroundColor = "orange";
+        textBlock.style.margin = " 1% 15% 15% 24%";
+        textBlock.style.padding = "20px";
+        textBlock.style.border = "1px solid #888";
+        textBlock.style.width = "60%";
+        textBlock.style.height = "91.5%";
+        textBlock.style.overflow = "auto";
+        textBlock.style.borderRadius = "5px";
+        textBlock.style.textAlign = "left";
+        modal.appendChild(textBlock);
+
+        Object.keys(loadedFiles).forEach(fileName => {
+            const fileDiv = document.createElement('div');
+            fileDiv.textContent = fileName;
+            fileDiv.style.cursor = "pointer";
+            fileDiv.onclick = function () {
+                textBlock.innerHTML = '';
+                const pre = document.createElement('pre');
+                const fileContent = loadedFiles[fileName];
+                const lines = fileContent.split('\n');
+                const filteredLines = lines.filter(line => !line.includes('[Render thread/INFO]: [STDOUT]'));
+                pre.textContent = filteredLines.join('\n');
+                textBlock.appendChild(pre);
+
+                modal.style.display = "block";
+            }
+            fileList.appendChild(fileDiv);
+        });
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
     }
-});
 
-document.getElementById('continueBtn').addEventListener('click', function() {
-    var resultFoundElements = document.querySelectorAll('.result.found, .word');
-    var nickname = document.getElementById('nicknameInput').value.trim();
-    var textToSend = '';
+    function applyFiltersToModsInfo(modsContent) {
 
-    if (nickname.length >= 4) {
-        if (resultFoundElements.length > 0) {
-            textToSend += '**<@339471364312530945> | <@505592459368071168> | Игрок: ' + nickname + '\n**';
-            textToSend += '```diff\n';
-
-            resultFoundElements.forEach(function(element) {
-                var line = element.innerText.trim();
-                if (!line.includes('▼') && !line.includes('●')) {
-                    var regex = /\((\d+)\)$/;
-                    var match = regex.exec(line);
-                    if (match && parseInt(match[1]) > 0) {
-                        textToSend += '- ';
-                    }
-                    textToSend += line + '\n';
-                }
-            });
-
-            textToSend += '```';
-
-            sendTextToDiscord(textToSend);
-            closePopup();
-        } else {
-            alert('Выберите файлы чтобы продолжить.');
-        }
-    } else {
-        alert('Никнейм должен содержать как минимум 4 символа.');
+        const modsInfo = extractModsInfo(modsContent);
+        return modsInfo;
     }
+
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  handleFiles(event.target.files);
 });
+
+document.addEventListener('dragover', function(event) {
+  event.preventDefault();
+});
+
+document.addEventListener('drop', function(event) {
+  event.preventDefault();
+  handleFiles(event.dataTransfer.files);
+});
+
+function handleFiles(files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const contents = event.target.result;
+
+      const isCompressed = contents.startsWith('\x1f\x8b');
+
+      if (isCompressed) {
+        return;
+      }
+
+      gtag('event', 'file_upload', {
+        'event_category': 'File',
+        'event_label': 'File Uploaded'
+      });
+    };
+
+    reader.readAsText(file);
+  }
+}
+
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'G-JF528ZMJKG');
 </script>
 </body>
 </html>
