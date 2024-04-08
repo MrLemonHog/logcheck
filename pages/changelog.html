@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changelog Log-cheker</title>
-    <link rel="icon" type="image/png" href="img/logo-changelog.png"/>
+    <link rel="icon" type="image/png" href="./img/logo-changelog.png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,6 +13,11 @@
             background-color: #4e4e4e;
         }
         .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container-current {
             max-width: 800px;
             margin: 20px auto;
             padding: 0 20px;
@@ -70,8 +75,19 @@
     </style>
 </head>
 <body>
+    <h1>Changelog Log-cheker</h1>
+    <div class="container-current">
+        <ul>
+            <li>
+                <div class="version">Обновление 1.1.0</div>
+                <div class="date">8 апреля 2024 г.</div>
+                <div class="entry added">При заходе на сайт отображается changelog</div>
+                <div class="entry added">Добавлена кнопка в хедере, она убирает фон на сайте и наоборот</div>
+                <div class="entry changed">Изменён цвет фона в просмотре полного лога</div>
+            </li>
+        </ul>
+    </div>
     <div class="container">
-        <h1>Changelog Log-cheker</h1>
         <ul>
             <li>
                 <div class="version">Обновление 1.0.0 "Бета-тестирование завершено"</div>

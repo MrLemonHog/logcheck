@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log-checker</title>
-    <link rel="icon" type="image/png" href="img/logo.png"/>
+    <link rel="icon" type="image/png" href="img/logo.png">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JF528ZMJKG"></script>
     <meta property="og:title" content="Log-checker">
     <meta property="og:description" content="Проверка .log и .log.gz из папки logs майнкрафт на ключевые слова">
@@ -14,15 +14,16 @@
 </head>
 <body>
     <div class="noise"></div>
-<div class="obsidian">
-<h1>.Log Checker</h1>
-</div>
-<input type="file" id="fileInput" accept=".log,.log.gz" multiple>
-<button id="chooseFile" onclick="showMinecraftPath()" style="margin-top: 40px; padding: 40px 30px; background-color: #ff9100; color: rgb(45, 45, 45); border: none; border-radius: 4px; cursor: pointer; font-size: 18px;">
-    <h3>Выбрать файлы</h3>
-    <h3><p>.log | .log.gz</p></h3>
-</button>
-<div class="center-inputwords">
+        <div class="obsidian">
+            <h1>.Log Checker</h1>
+            <div id="toggleButton" class="toggle-button"></div>
+        </div>
+            <input type="file" id="fileInput" accept=".log,.log.gz" multiple>
+            <button id="chooseFile" onclick="showMinecraftPath()" style="margin-top: 40px; padding: 40px 30px; background-color: #ff9100; color: rgb(45, 45, 45); border: none; border-radius: 4px; cursor: pointer; font-size: 18px;">
+                <h3>Выбрать файлы</h3>
+                <h3><p>.log | .log.gz</p></h3>
+            </button>
+        <div class="center-inputwords">
     <div class="inputwords">
         <input class="click-input" type="text" id="newWordInput" placeholder="Напишите новое ключ-слово">
         <button onclick="addWord()">Добавить</button>
@@ -32,6 +33,13 @@
 </div>
 
 <div id="fileCount"></div>
+<div id="dark"></div>
+
+<div id="changeLogBanner">
+    <span class="closeBtn" onclick="closeChangeLogBanner()">✖</span>
+    <div id="changeLogContent">
+    </div>
+</div>
 <div class="wrapper">
     <div id="mods" class="side-block">
         <div id="modsOutput"></div>
@@ -52,7 +60,7 @@
                         <!-- <p>Поддержать разработку</p> -->
                     </div>
                     <div class="version">
-                        <a href="pages/changelog.html"><p>Обновление: 1.0.0</p></a>
+                        <a href="pages/changelog.html"><p>Обновление: 1.1.0</p></a>
                     </div>
                     </div>
                         <div class="dop-info">
@@ -501,6 +509,110 @@
         color: inherit;
         color: #FFFFFF;
     }
+    #dark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+
+    #changeLogBanner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #3d3d3d;
+        color: antiquewhite;
+        border-radius: 5px;
+        padding: 20px;
+        max-width: 80%;
+        display: none;
+        z-index: 1000;
+    }
+
+    .closeBtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: #fff;
+    }
+
+    #changeLogContent {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 20px;
+        background-color: #3d3d3d;
+        color: antiquewhite;
+        border-radius: 5px;
+    }
+    #changeLogContent ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    #changeLogContent ul li {
+        text-align: left;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    #changeLogContent .version {
+        font-size: 20px;
+        font-weight: bold;
+        color: rgb(253, 212, 158);
+    }
+    #changeLogContent .date {
+        color: rgb(253, 212, 158);
+        margin-bottom: 15px;
+    }
+    #changeLogContent .added::before,
+    #changeLogContent .removed::before,
+    #changeLogContent .changed::before {
+        font-size: 24px;
+        margin-right: 5px;
+    }
+    #changeLogContent .added::before {
+        content: "+";
+        color: rgb(44, 209, 44);
+        margin-right: 5px;
+    }
+    #changeLogContent .removed::before {
+        content: "-";
+        color: rgb(249, 21, 21);
+        margin-right: 5px;
+    }
+    #changeLogContent .changed::before {
+        content: "•";
+        color: rgb(0, 208, 255);
+        margin-right: 5px;
+    }
+    #changeLogContent .entry {
+        margin-bottom: 10px;
+    }
+    .images-hidden .obsidian {
+        background-image: none;
+    }
+
+    .images-hidden .noise {
+        display: none;
+    }
+    .toggle-button {
+        position: absolute;
+        top: 30px;
+        right: 70px;
+        width: 90px;
+        height: 90px;
+        background-image: url('img/light_portal_mini.png');
+        background-size: cover;
+        cursor: pointer;
+    }
+
+    .toggle-button.clicked {
+        background-image: url('img/dark_portal_mini.png');
+    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.11/pako_inflate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
@@ -736,12 +848,12 @@
                 fileList.style.zIndex = "2";
                 fileList.style.top = "0";
                 fileList.style.left = "0";
-                fileList.style.backgroundColor = "orange";
+                fileList.style.backgroundColor = "#a9a9a9";
                 fileList.style.borderRadius = "5px";
                 modal.appendChild(fileList);
 
                 const textBlock = document.createElement('div');
-                textBlock.style.backgroundColor = "orange";
+                textBlock.style.backgroundColor = "#a9a9a9";
                 textBlock.style.margin = " 1% 15% 15% 24%";
                 textBlock.style.padding = "20px";
                 textBlock.style.border = "1px solid #888";
@@ -1087,12 +1199,12 @@
         fileList.style.zIndex = "2";
         fileList.style.top = "0";
         fileList.style.left = "0";
-        fileList.style.backgroundColor = "orange";
+        fileList.style.backgroundColor = "#a9a9a9";
         fileList.style.borderRadius = "5px";
         modal.appendChild(fileList);
 
         const textBlock = document.createElement('div');
-        textBlock.style.backgroundColor = "orange";
+        textBlock.style.backgroundColor = "#a9a9a9";
         textBlock.style.margin = " 1% 15% 15% 24%";
         textBlock.style.padding = "20px";
         textBlock.style.border = "1px solid #888";
@@ -1177,6 +1289,87 @@ window.dataLayer = window.dataLayer || [];
 function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
 gtag('config', 'G-JF528ZMJKG');
+
+function openChangeLogBanner() {
+            var dark = document.getElementById('dark');
+            var changeLogBanner = document.getElementById('changeLogBanner');
+            dark.style.display = 'block';
+            changeLogBanner.style.display = 'block';
+            loadChangeLog();
+        }
+
+        function closeChangeLogBanner() {
+            var dark = document.getElementById('dark');
+            var changeLogBanner = document.getElementById('changeLogBanner');
+            dark.style.display = 'none';
+            changeLogBanner.style.display = 'none';
+        }
+
+        function loadChangeLog() {
+            var changeLogURL = 'pages/changelog.html';
+
+            fetch(changeLogURL)
+                .then(response => response.text())
+                .then(data => {
+                    var parser = new DOMParser();
+                    var htmlDoc = parser.parseFromString(data, 'text/html');
+                    var containerCurrent = htmlDoc.querySelector('.container-current');
+
+                    if (containerCurrent) {
+                        var changeLogContent = document.getElementById('changeLogContent');
+                        changeLogContent.innerHTML = containerCurrent.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Error fetching change log:', error));
+        }
+
+    <!-- JavaScript для закрытия баннера при клике за его пределами -->
+        window.onclick = function(event) {
+            var dark = document.getElementById('dark');
+            var changeLogBanner = document.getElementById('changeLogBanner');
+            if (event.target == dark) {
+                closeChangeLogBanner();
+            }
+        }
+
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            var isEscape = false;
+            if ("key" in evt) {
+                isEscape = (evt.key === "Escape" || evt.key === "Esc");
+            } else {
+                isEscape = (evt.keyCode === 27);
+            }
+            if (isEscape) {
+                closeChangeLogBanner();
+            }
+        };
+
+        window.onload = openChangeLogBanner;
+
+        document.addEventListener('DOMContentLoaded', function() {
+    var button = document.getElementById('toggleButton');
+    var obsidian = document.querySelectorAll('.obsidian');
+    var noise = document.querySelector('.noise');
+
+    button.addEventListener('click', function() {
+        for (var i = 0; i < obsidian.length; i++) {
+            if (obsidian[i].classList.contains('images-hidden')) {
+                obsidian[i].classList.remove('images-hidden');
+                obsidian[i].style.backgroundImage = 'url("img/obsidian.png")';
+                noise.style.display = 'block';
+                if (button.classList.contains('clicked')) {
+                    button.classList.remove('clicked');
+                }
+            } else {
+                obsidian[i].classList.add('images-hidden');
+                obsidian[i].style.backgroundImage = 'none';
+                noise.style.display = 'none';
+                button.classList.add('clicked');
+            }
+        }
+    });
+});
 </script>
 </body>
 </html>
